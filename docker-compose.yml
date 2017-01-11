@@ -1,0 +1,19 @@
+version: '2'
+services:
+  web:
+    build: 
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile
+    links:
+      - db:postgres
+    ports:
+      - 8080:8080
+      - 9990:9990
+  db:
+    image: postgres:9.4
+    volumes:
+      - ./communcation_composants/schema_crowdfunding.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_USER=docker
+      - POSTGRES_DB=crowdfunding
