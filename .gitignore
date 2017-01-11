@@ -1,1 +1,36 @@
-*//*
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+#java compile
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# temporary files
+*~
+
+# build and IDE specific files and directories 
+.project
+.settings
+.classpath
+.externalToolBuilders/
+.tern*
+build/
+build/*
+build
+bin/
+bin
+
+#merge conflict
+*.orig
+
+# gradle
+.gradle/
+.gradle
+.gradle/*
