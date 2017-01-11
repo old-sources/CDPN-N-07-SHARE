@@ -3,6 +3,7 @@
 	<name>crowdfundingRestAPI</name>
 	<comment></comment>
 	<projects>
+		<project>crowdfundingPersistence</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

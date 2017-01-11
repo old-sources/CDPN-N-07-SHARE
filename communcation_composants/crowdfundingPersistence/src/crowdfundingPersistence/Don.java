@@ -19,11 +19,6 @@ public class Don implements Serializable {
 	@Column(name="id")
 	private int id;
 
-	@Column(name="personne_id")
-	private int personneId;
-
-	@Column(name="projet_id")
-	private int projetId;
 
 	@Column(name="valeur")
 	private int valeur;
@@ -49,21 +44,6 @@ public class Don implements Serializable {
 		this.id = id;
 	}
 
-	public int getPersonneId() {
-		return this.personneId;
-	}
-
-	public void setPersonneId(int personneId) {
-		this.personneId = personneId;
-	}
-
-	public int getProjetId() {
-		return this.projetId;
-	}
-
-	public void setProjetId(int projetId) {
-		this.projetId = projetId;
-	}
 
 	public int getValeur() {
 		return this.valeur;
