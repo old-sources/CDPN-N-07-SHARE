@@ -1,7 +1,17 @@
 package crowdfundingPersistence;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 
 /**
@@ -10,7 +20,12 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="don")
-@NamedQuery(name="Don.findAll", query="SELECT d FROM Don d")
+@NamedQueries({
+	@NamedQuery(name="Don.findAll", query="SELECT d FROM Don d"),
+	@NamedQuery(name="Don.deleteFromProjet", query="Delete FROM Don d where d.projet.id=:id"),
+	@NamedQuery(name="Don.findFromProjet", query="SELECT d FROM Don d where d.projet.id=:id")
+})
+	
 public class Don implements Serializable {
 	private static final long serialVersionUID = 1L;
 
