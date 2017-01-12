@@ -1,7 +1,7 @@
 FROM jboss/wildfly
 RUN /opt/jboss/wildfly/bin/add-user.sh admin pass --silent
-ADD dockerfiles/scripts /tmp
-ADD dockerfiles/jars/postgresql-9.4.1212.jar /tmp/postgresql-9.4.1212.jar
+ADD docker/scripts /tmp
+ADD docker/jars/postgresql-9.4.1212.jar /tmp/postgresql-9.4.1212.jar
 USER root
 RUN chmod -R 777 /tmp
 USER jboss
