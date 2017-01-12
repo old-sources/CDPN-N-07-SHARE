@@ -6,7 +6,7 @@ module add --name=org.postgres --resources=/tmp/postgresql-9.4.1212.jar --depend
 /subsystem=datasources/jdbc-driver=postgres:add(driver-name="postgres",driver-module-name="org.postgres",driver-class-name=org.postgresql.Driver)
 
 # Add the datasource
-data-source add --jndi-name=java:/postgres --name=postgres --connection-url=jdbc:postgresql://postgres/crowdfunding --driver-name=postgres --user-name=docker --password=docker
+data-source add --jndi-name=java:/postgres --name=postgres --connection-url=jdbc:postgresql://db/crowdfunding --driver-name=postgres --user-name=docker --password=docker
 
 # Execute the batch
 run-batch
