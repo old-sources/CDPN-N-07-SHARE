@@ -1,6 +1,6 @@
 version: '2'
 services:
-  web:
+  api:
     build: 
       context: crowdfunding-api
     links:
@@ -13,3 +13,11 @@ services:
   db:
     build:
       context: crowdfunding-persistence
+  http:
+    image: httpd:2.4
+    volumes:
+      - ./crowdfunding-http/public:/usr/local/apache2/htdocs
+    links:
+      - api:api
+    ports:
+      - 8081:80
