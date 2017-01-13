@@ -1,8 +1,17 @@
 package crowdfundingPersistence;
 
 import java.io.Serializable;
-import javax.persistence.*;
-import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 
 /**
@@ -12,6 +21,7 @@ import java.util.List;
 @Entity
 @Table(name="projet")
 @NamedQuery(name="Projet.findAll", query="SELECT p FROM Projet p")
+@XmlRootElement
 public class Projet implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -28,6 +38,9 @@ public class Projet implements Serializable {
 
 	@Column(name="objectif")
 	private int objectif;
+	
+	@Transient
+	private int sommeDon;
 
 
 	
@@ -50,7 +63,7 @@ public class Projet implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+	
 	public String getNom() {
 		return this.nom;
 	}
@@ -66,5 +79,15 @@ public class Projet implements Serializable {
 	public void setObjectif(int objectif) {
 		this.objectif = objectif;
 	}
+
+	public int getSommeDon() {
+		return sommeDon;
+	}
+
+	public void setSommeDon(int sommeDon) {
+		this.sommeDon = sommeDon;
+	}
+	
+	
 
 }

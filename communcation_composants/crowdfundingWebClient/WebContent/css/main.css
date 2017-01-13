@@ -1,0 +1,21 @@
+@CHARSET "UTF-8";
+.model{
+	display: none;
+
+}
+
+.project{
+		border-style: solid;
+		margin : 5px;
+		padding : 5px;
+		flex-basis : 45%;
+}
+
+.projectContainer{
+	display:flex;
+	flex-wrap: wrap
+}
+
+.projectSommeDon{
+	width:100%;
+}

@@ -1,0 +1,27 @@
+version = '1.0.0-SNAPSHOT'
+group='imie'
+
+apply plugin: 'java'
+sourceCompatibility = 1.8
+
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    api
+}
+
+dependencies {
+    api(
+	group: 'com.rabbitmq', name: 'amqp-client', version: '4.0.1'
+    )
+}
+
+task extractApi(type: Copy) {
+    from { // use of closure defers evaluation until execution time
+        configurations.api.collect { zipTree(it) }
+    } 
+    into "$buildDir/api/"
+}

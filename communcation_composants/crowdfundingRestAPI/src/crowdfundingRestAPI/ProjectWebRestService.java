@@ -1,5 +1,6 @@
 package crowdfundingRestAPI;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -18,6 +19,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -26,17 +28,34 @@ import crowdfundingPersistence.Don;
 import crowdfundingPersistence.Projet;
 
 @Path("projet")
-@Produces({ MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_JSON })
 @Stateless
 public class ProjectWebRestService {
 	@PersistenceContext
 	EntityManager entityManager;
+	
+	private Projet computeDonValue(Projet projetIn){
+		Projet projetOut = projetIn;
+		TypedQuery<Don> createNamedQuery = entityManager.createNamedQuery("Don.findFromProjet",Don.class);
+		List<Don> dons= createNamedQuery.setParameter("id", projetIn.getId()).getResultList();
+		Integer somme = 0;
+		for (Don don : dons) {
+			somme+=don.getValeur();
+		}
+		projetOut.setSommeDon(somme);
+		return projetOut;
+	}
 
 	@GET
 	public Response getAllProjects() {
 		List<Projet> list = entityManager.createNamedQuery("Projet.findAll", Projet.class).getResultList();
-		return Response.ok(list).build();
+		List<Projet> listOut = new ArrayList<>();
+		for (Projet projet : list) {
+			listOut.add(computeDonValue(projet));
+		}
+		GenericEntity<List<Projet>> entity = new GenericEntity<List<Projet>>(listOut){};
+		return Response.ok(entity).build();
 	}
 
 	@GET

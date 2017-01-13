@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link href="./css/main.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div id="mainContainer">
+		<div class="projectContainer">
+			<div class="project model">
+				<div class="projectName"></div>
+				<div class="projectDescription"></div>
+				<div class="projectObjectif"></div>
+				<meter class="projectSommeDon" value="0" min="0" max="0"></meter>
+			</div>
+
+		</div>
+	</div>
+</body>
+<script>
+var myHeaders = new Headers();
+myHeaders.append('Accept', 'application/json');
+fetch('http://localhost:8080/crowdfundingRestAPI/api/1/projet',{headers:myHeaders}).then(response=>{
+	return response.json();
+	}).then(function(data) {
+		console.log(data);
+		var model = document.querySelector(".model");
+		for (record of data){
+			var container = document.querySelector(".projectContainer");
+			var node = model.cloneNode(true);
+			node.querySelector(".projectName").appendChild(document.createTextNode(record.nom));
+			node.querySelector(".projectDescription").appendChild(document.createTextNode(record.description));
+			node.querySelector(".projectObjectif").appendChild(document.createTextNode(record.objectif));
+			node.querySelector(".projectSommeDon").setAttribute("max",record.objectif);
+			node.querySelector(".projectSommeDon").setAttribute("value",record.sommeDon);
+			
+			node.classList.remove("model");
+			container.appendChild(node);
+		}
+	
+	}).catch(function(err) {
+	console.log('Fetch Error :-S', err);
+	});
+</script>
+</html>
