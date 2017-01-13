@@ -1,17 +1,15 @@
 package crowdfundingRestAPI;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -25,9 +23,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import crowdfundingPersistence.Don;
 import crowdfundingPersistence.Projet;
-import fr.imie.ProjetBusinessLocal;
+import fr.imie.ProjetBusinessRemote;
 
 @Path("projet")
 @Produces({ MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON })
@@ -37,12 +34,35 @@ public class ProjectWebRestService {
 	@PersistenceContext
 	EntityManager entityManager;
 	
-	@EJB
-	ProjetBusinessLocal projetBusiness;
+
+	ProjetBusinessRemote projetBusiness;
 
 	@GET
 	public Response getAllProjects() {
-		GenericEntity<List<Projet>> entity = new GenericEntity<List<Projet>>(projetBusiness.getAllProjects()){};
+		
+		
+		Properties jndiProps = new Properties();
+		jndiProps.put(Context.URL_PKG_PREFIXES,"org.jboss.ejb.client.naming");
+		jndiProps.put(Context.PROVIDER_URL,"remote://localhost:4447");
+		// username
+		jndiProps.put(Context.SECURITY_PRINCIPAL, "ejbUser");
+		// password
+		jndiProps.put(Context.SECURITY_CREDENTIALS, "ejbUser");
+		// create a context passing these properties
+		Context ctx;
+		ProjetBusinessRemote bean=null;
+		try {
+			ctx = new InitialContext(jndiProps);
+			// lookup the bean beanRemoteInterface
+			bean = (ProjetBusinessRemote) ctx.lookup("java:global/crowdfundingBusinessDeployement/crowdfundingBusiness/ProjetBusiness!fr.imie.ProjetBusinessRemote");
+			
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		GenericEntity<List<Projet>> entity = new GenericEntity<List<Projet>>(bean.getAllProjects()){};
 		return Response.ok(entity).build();
 	}
 
