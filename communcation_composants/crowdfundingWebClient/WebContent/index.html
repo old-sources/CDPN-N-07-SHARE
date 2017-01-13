@@ -20,6 +20,28 @@
 </body>
 <script>
 var myHeaders = new Headers();
+var urls = ['http://172.16.28.210:8080/crowdfundingapi/api/1/projet','http://172.16.28.117:8080/crowdfundingRestAPI/api/1/projet'];
+myHeaders.append('Accept', 'application/json');
+var fetchPromises = urls.map(url=>{return fetch(url,{headers:myHeaders})});
+Promise.all(fetchPromises).then(responseList=>{
+	return Promise.all(responseList.map(response=>response.json()));
+}).then(dataList=>{
+	var projectList=  [].concat.apply([], dataList);
+	var model = document.querySelector(".model");
+	for (record of projectList){
+		var container = document.querySelector(".projectContainer");
+		var node = model.cloneNode(true);
+		node.querySelector(".projectName").appendChild(document.createTextNode(record.nom));
+		node.querySelector(".projectDescription").appendChild(document.createTextNode(record.description));
+		node.querySelector(".projectObjectif").appendChild(document.createTextNode(record.objectif));
+		node.querySelector(".projectSommeDon").setAttribute("max",record.objectif);
+		node.querySelector(".projectSommeDon").setAttribute("value",record.sommeDon);
+		
+		node.classList.remove("model");
+		container.appendChild(node);
+	}
+})
+/* 
 myHeaders.append('Accept', 'application/json');
 fetch('http://localhost:8080/crowdfundingRestAPI/api/1/projet',{headers:myHeaders}).then(response=>{
 	return response.json();
@@ -41,6 +63,6 @@ fetch('http://localhost:8080/crowdfundingRestAPI/api/1/projet',{headers:myHeader
 	
 	}).catch(function(err) {
 	console.log('Fetch Error :-S', err);
-	});
+	}); */
 </script>
 </html>
