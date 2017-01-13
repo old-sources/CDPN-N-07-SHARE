@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -22,6 +24,7 @@ import crowdfundingPersistence.Projet;
  */
 @Stateless
 @Remote(ProjetBusinessRemote.class)
+
 public class ProjetBusiness implements ProjetBusinessRemote, ProjetBusinessLocal {
 
 	@PersistenceContext
@@ -47,6 +50,7 @@ public class ProjetBusiness implements ProjetBusinessRemote, ProjetBusinessLocal
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public List<Projet> getAllProjects() {
 		List<Projet> list = entityManager.createNamedQuery("Projet.findAll", Projet.class).getResultList();
 		List<Projet> listOut = new ArrayList<>();
@@ -92,6 +96,7 @@ public class ProjetBusiness implements ProjetBusinessRemote, ProjetBusinessLocal
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Projet createOneProject(Projet projet) {
 		entityManager.persist(projet);
 		return projet;

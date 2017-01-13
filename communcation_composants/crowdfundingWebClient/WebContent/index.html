@@ -7,49 +7,34 @@
 </head>
 <body>
 	<div id="mainContainer">
-		<div class="projectContainer">
-			<div class="project model">
-				<div class="projectName"></div>
-				<div class="projectDescription"></div>
-				<div class="projectObjectif"></div>
-				<meter class="projectSommeDon" value="0" min="0" max="0"></meter>
-			</div>
-
+		<div class="project model">
+			<div class="projectName"></div>
+			<div class="projectDescription"></div>
+			<div class="projectObjectif"></div>
+			<meter class="projectSommeDon" value="0" min="0" max="0"></meter>
 		</div>
+		<div class="projectContainer"></div>
 	</div>
 </body>
 <script>
-var myHeaders = new Headers();
-var urls = ['http://172.16.28.210:8080/crowdfundingapi/api/1/projet','http://172.16.28.117:8080/crowdfundingRestAPI/api/1/projet'];
-myHeaders.append('Accept', 'application/json');
-var fetchPromises = urls.map(url=>{return fetch(url,{headers:myHeaders})});
-Promise.all(fetchPromises).then(responseList=>{
-	return Promise.all(responseList.map(response=>response.json()));
-}).then(dataList=>{
-	var projectList=  [].concat.apply([], dataList);
-	var model = document.querySelector(".model");
-	for (record of projectList){
+
+var load= function(){
+	var myHeaders = new Headers();
+	var urls = ['http://172.16.28.117:8080/crowdfundingRestAPI/api/1/projet'];
+	myHeaders.append('Accept', 'application/json');
+	var fetchPromises = urls.map(url=>{return fetch(url,{headers:myHeaders,cache:'no-cache'})});
+	Promise.all(fetchPromises).then(responseList=>{
+		return Promise.all(responseList.map(response=>response.json()));
+	}).then(dataList=>{
+		var projectList=  [].concat.apply([], dataList);
+		console.log(projectList);
 		var container = document.querySelector(".projectContainer");
-		var node = model.cloneNode(true);
-		node.querySelector(".projectName").appendChild(document.createTextNode(record.nom));
-		node.querySelector(".projectDescription").appendChild(document.createTextNode(record.description));
-		node.querySelector(".projectObjectif").appendChild(document.createTextNode(record.objectif));
-		node.querySelector(".projectSommeDon").setAttribute("max",record.objectif);
-		node.querySelector(".projectSommeDon").setAttribute("value",record.sommeDon);
-		
-		node.classList.remove("model");
-		container.appendChild(node);
-	}
-})
-/* 
-myHeaders.append('Accept', 'application/json');
-fetch('http://localhost:8080/crowdfundingRestAPI/api/1/projet',{headers:myHeaders}).then(response=>{
-	return response.json();
-	}).then(function(data) {
-		console.log(data);
+		while (container.firstChild) {
+			container.removeChild(container.firstChild);
+		}
 		var model = document.querySelector(".model");
-		for (record of data){
-			var container = document.querySelector(".projectContainer");
+		for (record of projectList){
+			
 			var node = model.cloneNode(true);
 			node.querySelector(".projectName").appendChild(document.createTextNode(record.nom));
 			node.querySelector(".projectDescription").appendChild(document.createTextNode(record.description));
@@ -60,9 +45,19 @@ fetch('http://localhost:8080/crowdfundingRestAPI/api/1/projet',{headers:myHeader
 			node.classList.remove("model");
 			container.appendChild(node);
 		}
-	
-	}).catch(function(err) {
-	console.log('Fetch Error :-S', err);
-	}); */
+	});
+}
+var ws = new WebSocket("ws://localhost:8080/crowdfundingRestAPI/ws");
+ws.onopen = function(){
+	console.log('open');
+};
+ws.onmessage = function (evt)
+{
+	var msg = evt.data;
+	console.log(msg);
+	load();
+};
+load()
+ws.onclose = function(){};
 </script>
 </html>

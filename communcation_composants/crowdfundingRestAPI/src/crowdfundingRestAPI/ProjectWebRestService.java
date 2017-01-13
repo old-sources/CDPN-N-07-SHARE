@@ -3,7 +3,10 @@ package crowdfundingRestAPI;
 import java.util.List;
 import java.util.Properties;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -28,11 +31,14 @@ import fr.imie.ProjetBusinessRemote;
 @Consumes({ MediaType.APPLICATION_JSON })
 @Stateless
 public class ProjectWebRestService {
+	@EJB
+	WebSocketAlert webSocketAlert;
+	
 
-	private ProjetBusinessRemote builldRemoteEJB() {
+	private ProjetBusinessRemote buildRemoteEJB() {
 		Properties jndiProps = new Properties();
 		jndiProps.put(Context.URL_PKG_PREFIXES,"org.jboss.ejb.client.naming");
-		jndiProps.put(Context.PROVIDER_URL,"remote://localhost:4447");
+		jndiProps.put(Context.PROVIDER_URL,"remote://172.16.28.117:8080");
 		// username
 		jndiProps.put(Context.SECURITY_PRINCIPAL, "ejbUser");
 		// password
@@ -52,12 +58,12 @@ public class ProjectWebRestService {
 		return bean;
 	}
 	
+
+	
 	@GET
-	public Response getAllProjects() {
-		
-		
-		ProjetBusinessRemote bean = builldRemoteEJB();
-		GenericEntity<List<Projet>> entity = new GenericEntity<List<Projet>>(builldRemoteEJB().getAllProjects()){};
+	public Response getAllProjects() {	
+		ProjetBusinessRemote bean = buildRemoteEJB();
+		GenericEntity<List<Projet>> entity = new GenericEntity<List<Projet>>(buildRemoteEJB().getAllProjects()){};
 		return Response.ok(entity).build();
 	}
 
@@ -66,16 +72,14 @@ public class ProjectWebRestService {
 	@GET
 	@Path("/{id}")
 	public Response getOneProject(@PathParam("id") Integer id) {
-		
-		return Response.ok(builldRemoteEJB().getOneProject(id)).build();
+		return Response.ok(buildRemoteEJB().getOneProject(id)).build();
 	}
 
 	@DELETE
 	@Path("/{id}")
 	public Response deleteOneProject(@PathParam("id") Integer id) {
-
 		ResponseBuilder responseBuilder;
-		if (builldRemoteEJB().deleteOneProject(id)) {
+		if (buildRemoteEJB().deleteOneProject(id)) {
 			responseBuilder = Response.status(204);
 		} else {
 			responseBuilder = Response.status(404);
@@ -85,14 +89,15 @@ public class ProjectWebRestService {
 
 	@POST
 	public Response createOneProject(Projet projet) {
-		return Response.ok(builldRemoteEJB().createOneProject(projet)).build();
+		Projet created = buildRemoteEJB().createOneProject(projet);
+		webSocketAlert.ping();
+		return Response.ok(created).build();
 	}
 
 	@PUT
 	@Path("/{id}")
 	public Response updateOneProject(Projet projet, @PathParam("id") Integer id) {
-		return Response.ok(builldRemoteEJB().updateOneProject(projet, id)).build();
-
+		return Response.ok(buildRemoteEJB().updateOneProject(projet, id)).build();
 	}
 
 }
